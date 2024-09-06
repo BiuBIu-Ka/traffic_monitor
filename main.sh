@@ -3,14 +3,27 @@
 # 获取当前脚本的绝对路径
 SCRIPT_PATH=$(realpath "$0")
 
-# 保存流量数据的文件
-TRAFFIC_FILE="/root/network_traffic/network_traffic.dat"
-LOG_FILE="/root/network_traffic/network_traffic_monitor.log"
+# 保存流量数据的目录和文件
+TRAFFIC_DIR="/root/network_traffic"
+TRAFFIC_FILE="$TRAFFIC_DIR/network_traffic.dat"
+LOG_FILE="$TRAFFIC_DIR/network_traffic_monitor.log"
 CURRENT_MONTH=$(date +"%Y-%m")
 SHUTDOWN_THRESHOLD=$((19 * 1024 * 1024 * 1024 + 512 * 1024 * 1024))  # 9.5GB 转换为字节的整数表示
 
 # 要监控的网络接口
 INTERFACE="eth0"
+
+# 创建保存流量数据的目录
+if [ ! -d "$TRAFFIC_DIR" ]; then
+    mkdir -p "$TRAFFIC_DIR"
+    if [ $? -eq 0 ]; then
+        echo "目录 $TRAFFIC_DIR 创建成功"
+    else
+        echo "无法创建目录 $TRAFFIC_DIR"
+        exit 1
+    fi
+fi
+
 
 # 定义日志记录函数
 log_message() {
